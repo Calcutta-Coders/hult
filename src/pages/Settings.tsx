@@ -1,3 +1,5 @@
+// src/pages/SettingsPage.tsx
+
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -13,6 +15,7 @@ import {
 } from "@mui/material";
 import Navbar from "../components/layout/Navbar";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface UserData {
   name: string;
@@ -33,31 +36,39 @@ const SettingsPage: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch("/api/v1/user", {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        });
+        const response = await axios.get("/api/v1/user");
+        console.log("Response", response);
 
-        if (!response.ok) {
-          if (response.status === 401) {
-            localStorage.removeItem("token");
-            navigate("/login");
-          }
-          throw new Error("Failed to fetch user data");
-        }
-
-        const data = await response.json();
+        const data = response.data;
         setUserData({
           name: data.name || "",
           email: data.email || null,
           bio: data.bio || "",
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching user data:", error);
-        alert("Failed to load user settings");
+
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            if (error.response.status === 401) {
+              localStorage.removeItem("token");
+              navigate("/login");
+            }
+            // Handle other response statuses if needed
+            alert(
+              error.response.data.message || "Failed to load user settings"
+            );
+          } else if (error.request) {
+            // Request was made but no response received
+            alert("No response from server. Please try again later.");
+          } else {
+            // Something happened while setting up the request
+            alert("An unexpected error occurred.");
+          }
+        } else {
+          // Non-Axios error
+          alert("Failed to load user settings");
+        }
       }
     };
 
@@ -66,68 +77,73 @@ const SettingsPage: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUserData(prev => ({
+    setUserData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSave = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/v1/user", {
-        method: "PATCH",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+      const response = await axios.patch("/api/v1/user", {
+        user: {
+          ...userData,
         },
-        body: JSON.stringify({
-          user: {
-            ...userData
-          }
-        })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.errors?.join(", ") || "Failed to save settings");
-      }
-
       alert("Settings saved successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Save error:", error);
-      alert(error instanceof Error ? error.message : "Failed to save settings");
+
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          const errorMessage =
+            error.response.data.errors?.join(", ") || "Failed to save settings";
+          alert(errorMessage);
+        } else if (error.request) {
+          alert("No response from server. Please try again later.");
+        } else {
+          alert("An unexpected error occurred.");
+        }
+      } else {
+        alert("Failed to save settings");
+      }
     }
   };
 
   const handleDeleteAccount = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("/api/v1/user", {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (!response.ok) throw new Error("Account deletion failed");
+      const response = await axios.delete("/api/v1/user");
 
       localStorage.removeItem("token");
       navigate("/login");
       alert("Account deleted successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Deletion error:", error);
-      alert("Failed to delete account");
+
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          alert(error.response.data.message || "Failed to delete account");
+        } else if (error.request) {
+          alert("No response from server. Please try again later.");
+        } else {
+          alert("An unexpected error occurred.");
+        }
+      } else {
+        alert("Failed to delete account");
+      }
     }
   };
 
   return (
     <>
-      <Navbar isLoggedIn={true} onLogout={() => {
-        localStorage.removeItem("token");
-        navigate("/login");
-      }} />
+      <Navbar
+        isLoggedIn={true}
+        onLogout={() => {
+          localStorage.removeItem("token");
+          navigate("/login");
+        }}
+      />
 
       <Box sx={{ maxWidth: 800, mx: "auto", mt: 4, p: 3 }}>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
@@ -178,7 +194,10 @@ const SettingsPage: React.FC = () => {
 
         {/* Danger Zone */}
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 500, color: "error.main" }}>
+          <Typography
+            variant="h6"
+            sx={{ mb: 2, fontWeight: 500, color: "error.main" }}
+          >
             Danger Zone
           </Typography>
           <Button
@@ -206,11 +225,15 @@ const SettingsPage: React.FC = () => {
         </Box>
 
         {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
+        >
           <DialogTitle>Delete Account?</DialogTitle>
           <DialogContent>
             <Typography>
-              Are you sure you want to permanently delete your account? This action:
+              Are you sure you want to permanently delete your account? This
+              action:
             </Typography>
             <ul style={{ paddingLeft: 20, marginTop: 8 }}>
               <li>Will remove all your data</li>

@@ -10,10 +10,15 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  useMediaQuery,
 } from "@mui/material";
+import { styled } from "@mui/system";
 import Navbar from "../components/layout/Navbar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import EditIcon from "@mui/icons-material/Edit";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 
 interface UserData {
   name: string;
@@ -30,6 +35,9 @@ const SettingsPage: React.FC = () => {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const isSmallScreen = useMediaQuery((theme: any) =>
+    theme.breakpoints.down("sm")
+  );
 
   useEffect(() => {
     const fetchUserData = async () => {

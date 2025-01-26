@@ -397,7 +397,11 @@ const ProfilePage: React.FC = () => {
           {activeTab === "followers" && (
             <List sx={{ width: "100%" }}>
               {followers.map((follower) => (
-                <ListItem key={follower.id} sx={{ py: 2 }}>
+                <ListItem
+                  onClick={() => navigate(`/users/${follower.id}`)}
+                  key={follower.id}
+                  sx={{ py: 2 }}
+                >
                   <ListItemAvatar>
                     <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                       {follower.name?.[0] || follower.username[0]}
@@ -423,7 +427,11 @@ const ProfilePage: React.FC = () => {
           {activeTab === "following" && (
             <List sx={{ width: "100%" }}>
               {following.map((user) => (
-                <ListItem key={user.id} sx={{ py: 2 }}>
+                <ListItem
+                  onClick={() => navigate(`/users/${user.id}`)}
+                  key={user.id}
+                  sx={{ py: 2 }}
+                >
                   <ListItemAvatar>
                     <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
                       {user.name?.[0] || user.username[0]}

@@ -28,11 +28,11 @@ const LoginPage: React.FC<LoginProps> = ({ setToken }) => {
       setToken(token);
 
       // Fetch user preferences
-      const preferencesResponse = await axios.get("/api/v1/user_preferences", {
+      const preferencesResponse = await axios.get("/api/v1/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const preferences = preferencesResponse.data.preferences;
+      const preferences = preferencesResponse.data.preferences.categories;
 
       // Redirect based on preferences
       if (!preferences || Object.keys(preferences).length === 0) {

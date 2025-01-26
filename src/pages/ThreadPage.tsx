@@ -62,6 +62,10 @@ interface Thread {
   user_liked: boolean;
   user_chilled: boolean;
   category: Category;
+  tags: Array<{
+    name: string;
+    id: number;
+  }>;
 }
 
 // Styled Components
@@ -327,25 +331,7 @@ const ThreadPage: React.FC = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        // Update comments without reloading the page
-        if (parentId) {
-          const addReply = (commentsList: Comment[]): Comment[] =>
-            commentsList.map((comment) => {
-              if (comment.id === parentId) {
-                return {
-                  ...comment,
-                  replies: [...comment.replies, res.data.comment],
-                };
-              }
-              return {
-                ...comment,
-                replies: addReply(comment.replies),
-              };
-            });
-          setComments((prev) => addReply(prev));
-        } else {
-          setComments((prev) => [...prev, res.data.comment]);
-        }
+        window.location.reload();
 
         setMainComment("");
         setReplyingTo(null);
@@ -453,7 +439,13 @@ const ThreadPage: React.FC = () => {
             mb: 4,
           }}
         >
-          <Box display="flex" alignItems="center" gap={2} mb={2}>
+          <Box
+            onClick={() => navigate(`/users/${thread?.user?.id}`)}
+            display="flex"
+            alignItems="center"
+            gap={2}
+            mb={2}
+          >
             <Avatar
               sx={{
                 bgcolor: "primary.main",
@@ -485,6 +477,22 @@ const ThreadPage: React.FC = () => {
           >
             {thread?.content}
           </Typography>
+
+          <Box display="flex" flexWrap="wrap" gap={1} sx={{ mt: 2 }}>
+            {thread?.tags.map((tag: { name: string; id: number }) => (
+              <Chip
+                key={tag.id}
+                label={`#${tag.name}`}
+                size="small"
+                sx={{
+                  bgcolor: "secondary.light",
+                  color: "secondary.contrastText",
+                  fontWeight: "bold",
+                  fontSize: "0.75rem",
+                }}
+              />
+            ))}
+          </Box>
 
           <Divider sx={{ my: 2 }} />
 

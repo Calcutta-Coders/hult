@@ -1,5 +1,3 @@
-// src/pages/SettingsPage.tsx
-
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -36,8 +34,11 @@ const SettingsPage: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("/api/v1/user");
-        console.log("Response", response);
+        const response = await axios.get("/api/v1/user", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         const data = response.data;
         setUserData({
@@ -54,19 +55,15 @@ const SettingsPage: React.FC = () => {
               localStorage.removeItem("token");
               navigate("/login");
             }
-            // Handle other response statuses if needed
             alert(
               error.response.data.message || "Failed to load user settings"
             );
           } else if (error.request) {
-            // Request was made but no response received
             alert("No response from server. Please try again later.");
           } else {
-            // Something happened while setting up the request
             alert("An unexpected error occurred.");
           }
         } else {
-          // Non-Axios error
           alert("Failed to load user settings");
         }
       }
@@ -85,11 +82,19 @@ const SettingsPage: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      const response = await axios.patch("/api/v1/user", {
-        user: {
-          ...userData,
+      const response = await axios.patch(
+        "/api/v1/user",
+        {
+          user: {
+            ...userData,
+          },
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       alert("Settings saved successfully!");
     } catch (error: any) {
@@ -113,7 +118,11 @@ const SettingsPage: React.FC = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      const response = await axios.delete("/api/v1/user");
+      const response = await axios.delete("/api/v1/user", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       localStorage.removeItem("token");
       navigate("/login");

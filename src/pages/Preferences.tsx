@@ -5,7 +5,6 @@ import {
   Button,
   Grid,
   TextField,
-  Chip,
   Card,
   CardActionArea,
   CardContent,
@@ -15,52 +14,39 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
 
 const SetupPreferences: React.FC = () => {
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
-  const [tags, setTags] = useState<{ id: number; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
+    []
+  );
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch categories and tags on component mount
+  // Fetch categories on component mount
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCategories = async () => {
       try {
-        const [categoriesRes, tagsRes] = await Promise.all([
-          axios.get("/api/v1/categories"),
-          axios.get("/api/v1/tags"),
-        ]);
+        const categoriesRes = await axios.get("/api/v1/categories");
         setCategories(categoriesRes.data);
-        setTags(tagsRes.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setError("Failed to fetch categories or tags. Please try again later.");
+        console.error("Error fetching categories:", error);
+        setError("Failed to fetch categories. Please try again later.");
       }
     };
-    fetchData();
+    fetchCategories();
   }, []);
 
-  // Handle category/tag selection
-  const handleSelection = (id: number, type: "category" | "tag") => {
-    const selected = type === "category" ? selectedCategories : selectedTags;
-    const setSelected = type === "category" ? setSelectedCategories : setSelectedTags;
-
-    setSelected((prev) =>
+  // Handle category selection
+  const handleCategorySelection = (id: number) => {
+    setSelectedCategories((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
-  // Filter items based on search query
-  const filteredItems =
-    currentStep === 1
-      ? categories.filter((item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      : tags.filter((item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+  // Filter categories based on search query
+  const filteredCategories = categories.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Handle form submission
   const handleSubmit = async () => {
@@ -74,7 +60,6 @@ const SetupPreferences: React.FC = () => {
           user: {
             preferences: {
               categories: selectedCategories,
-              tags: selectedTags,
               notifications: {
                 push: true, // Default notification preference
               },
@@ -95,12 +80,6 @@ const SetupPreferences: React.FC = () => {
       setLoading(false);
     }
   };
-
-  // Check if an item is selected
-  const isSelected = (id: number) =>
-    currentStep === 1
-      ? selectedCategories.includes(id)
-      : selectedTags.includes(id);
 
   return (
     <Box
@@ -131,14 +110,14 @@ const SetupPreferences: React.FC = () => {
             textAlign: "center",
           }}
         >
-          {currentStep === 1 ? "Select Categories" : "Choose Favorite Tags"}
+          Select Categories
         </Typography>
 
         {/* Search Bar */}
         <TextField
           fullWidth
           variant="outlined"
-          placeholder={`Search ${currentStep === 1 ? "categories" : "tags"}...`}
+          placeholder="Search categories..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{ mb: 4 }}
@@ -154,127 +133,81 @@ const SetupPreferences: React.FC = () => {
           </Typography>
         )}
 
-        {/* Categories Grid (Step 1) */}
-        {currentStep === 1 && (
-          <Grid container spacing={3}>
-            {filteredItems.map((item) => (
-              <Grid item xs={12} sm={6} md={4} key={item.id}>
-                <Card
-                  sx={{
-                    backgroundColor: isSelected(item.id) ? "#1976d2" : "#ffffff",
-                    color: isSelected(item.id) ? "#ffffff" : "#000000",
-                    borderRadius: 3,
-                    cursor: "pointer",
-                    boxShadow: isSelected(item.id)
-                      ? "0px 4px 15px rgba(25, 118, 210, 0.5)"
-                      : "0px 2px 10px rgba(0, 0, 0, 0.1)",
-                    transition: "all 0.3s ease-in-out",
-                    position: "relative",
-                  }}
-                  onClick={() => handleSelection(item.id, "category")}
-                >
-                  {isSelected(item.id) && (
-                    <CheckCircleIcon
+        {/* Categories Grid */}
+        <Grid container spacing={3}>
+          {filteredCategories.map((item) => (
+            <Grid item xs={12} sm={6} md={4} key={item.id}>
+              <Card
+                sx={{
+                  backgroundColor: selectedCategories.includes(item.id)
+                    ? "#1976d2"
+                    : "#ffffff",
+                  color: selectedCategories.includes(item.id)
+                    ? "#ffffff"
+                    : "#000000",
+                  borderRadius: 3,
+                  cursor: "pointer",
+                  boxShadow: selectedCategories.includes(item.id)
+                    ? "0px 4px 15px rgba(25, 118, 210, 0.5)"
+                    : "0px 2px 10px rgba(0, 0, 0, 0.1)",
+                  transition: "all 0.3s ease-in-out",
+                  position: "relative",
+                }}
+                onClick={() => handleCategorySelection(item.id)}
+              >
+                {selectedCategories.includes(item.id) && (
+                  <CheckCircleIcon
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      fontSize: "1.5rem",
+                      color: "#ffffff",
+                    }}
+                  />
+                )}
+                <CardActionArea>
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "150px",
+                    }}
+                  >
+                    <Typography
                       sx={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
                         fontSize: "1.5rem",
-                        color: "#ffffff",
-                      }}
-                    />
-                  )}
-                  <CardActionArea>
-                    <CardContent
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        height: "150px",
+                        fontWeight: "bold",
+                        textAlign: "center",
                       }}
                     >
-                      <Typography
-                        sx={{
-                          fontSize: "1.5rem",
-                          fontWeight: "bold",
-                          textAlign: "center",
-                        }}
-                      >
-                        {item.name}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
+                      {item.name}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
 
-        {/* Tags Grid (Step 2) */}
-        {currentStep === 2 && (
-          <Grid container spacing={1} sx={{ mb: 4 }}>
-            {filteredItems.map((item) => (
-              <Grid item key={item.id} xs="auto">
-                <Chip
-                  label={item.name}
-                  onClick={() => handleSelection(item.id, "tag")}
-                  sx={{
-                    px: 3,
-                    py: 1,
-                    borderRadius: 4,
-                    fontSize: "1rem",
-                    bgcolor: isSelected(item.id) ? "primary.main" : "#ffffff",
-                    color: isSelected(item.id) ? "common.white" : "text.primary",
-                    "&:hover": {
-                      bgcolor: isSelected(item.id) ? "primary.dark" : "#f5f5f5",
-                    },
-                    transition: "all 0.2s ease",
-                    border: isSelected(item.id) ? "none" : "1px solid #e0e0e0",
-                  }}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        )}
-
-        {/* Navigation Buttons */}
+        {/* Submit Button */}
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             mt: 4,
-            gap: 2,
           }}
         >
           <Button
-            variant="outlined"
-            onClick={() => setCurrentStep(1)}
-            disabled={currentStep === 1}
+            variant="contained"
+            onClick={handleSubmit}
             sx={{ borderRadius: 2, px: 4 }}
+            disabled={selectedCategories.length === 0 || loading}
           >
-            Back
+            {loading ? <CircularProgress size={24} /> : "Save Preferences"}
           </Button>
-
-          {currentStep === 1 ? (
-            <Button
-              variant="contained"
-              onClick={() => setCurrentStep(2)}
-              sx={{ borderRadius: 2, px: 4 }}
-              disabled={selectedCategories.length === 0}
-            >
-              Continue
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              sx={{ borderRadius: 2, px: 4 }}
-              disabled={selectedTags.length === 0 || loading}
-            >
-              {loading ? <CircularProgress size={24} /> : "Finish"}
-            </Button>
-          )}
         </Box>
       </Box>
     </Box>

@@ -1,5 +1,5 @@
 // NewCategoryDialog.jsx
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,14 +8,22 @@ import {
   TextField,
   Button,
   Typography,
-  CircularProgress
-} from '@mui/material';
-import axios from 'axios';
+  CircularProgress,
+} from "@mui/material";
+import axios from "axios";
 
-const NewCategoryDialog = ({ open, onClose }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [error, setError] = useState(null);
+interface NewCategoryDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const NewCategoryDialog: React.FC<NewCategoryDialogProps> = ({
+  open,
+  onClose,
+}) => {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState<null | string>(null);
   const [loading, setLoading] = useState(false);
 
   const handleCreateCategory = async () => {
@@ -23,30 +31,30 @@ const NewCategoryDialog = ({ open, onClose }) => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await axios.post(
-        '/api/v1/categories',
+        "/api/v1/categories",
         {
           category: {
             name,
-            description
-          }
+            description,
+          },
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      console.log('Category created:', response.data);
+      console.log("Category created:", response.data);
 
       // Clear the form and close the dialog
-      setName('');
-      setDescription('');
+      setName("");
+      setDescription("");
       onClose();
     } catch (err) {
-      console.error('Error creating category:', err);
-      setError('Failed to create category. Please try again.');
+      console.error("Error creating category:", err);
+      setError("Failed to create category. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -61,11 +69,11 @@ const NewCategoryDialog = ({ open, onClose }) => {
       // Blurred backdrop
       BackdropProps={{
         style: {
-          backdropFilter: 'blur(4px)'
-        }
+          backdropFilter: "blur(4px)",
+        },
       }}
     >
-      <DialogTitle sx={{ fontWeight: 'bold' }}>New Category</DialogTitle>
+      <DialogTitle sx={{ fontWeight: "bold" }}>New Category</DialogTitle>
 
       <DialogContent dividers>
         {error && (
@@ -94,7 +102,7 @@ const NewCategoryDialog = ({ open, onClose }) => {
         />
       </DialogContent>
 
-      <DialogActions sx={{ justifyContent: 'space-between' }}>
+      <DialogActions sx={{ justifyContent: "space-between" }}>
         <Button onClick={onClose} color="inherit" disabled={loading}>
           Cancel
         </Button>
@@ -103,11 +111,15 @@ const NewCategoryDialog = ({ open, onClose }) => {
           onClick={handleCreateCategory}
           disabled={loading}
           sx={{
-            bgcolor: '#88c0d0',
-            '&:hover': { bgcolor: '#729cb4' }
+            bgcolor: "#88c0d0",
+            "&:hover": { bgcolor: "#729cb4" },
           }}
         >
-          {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Create Category'}
+          {loading ? (
+            <CircularProgress size={24} sx={{ color: "white" }} />
+          ) : (
+            "Create Category"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

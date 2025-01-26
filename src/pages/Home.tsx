@@ -54,7 +54,10 @@ const moodColors: Record<string, string> = {
   casual: "#d08770",
 };
 
-const HomePage: React.FC = () => {
+interface HomeProps {
+  logout: () => void;
+}
+const HomePage: React.FC<HomeProps> = ({ logout }) => {
   const [feedThreads, setFeedThreads] = useState<FeedThread[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

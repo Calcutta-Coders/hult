@@ -1,7 +1,16 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, Button, Box, Menu, MenuItem, IconButton } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  Menu,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 interface NavbarProps {
   isLoggedIn: boolean;
@@ -45,11 +54,10 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, onLogout }) => {
         {/* Left Side: Logo */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <img
-            src="/icon.png" 
+            src="/icon.png"
             alt="Penguin Logo"
             style={{ width: 60, height: 60 }}
           />
-        
         </Box>
 
         {/* Center Links */}
@@ -65,10 +73,18 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, onLogout }) => {
           <Button href="/" color="inherit" sx={{ textTransform: "none" }}>
             Home
           </Button>
-          <Button href="/categories" color="inherit" sx={{ textTransform: "none" }}>
+          <Button
+            href="/categories"
+            color="inherit"
+            sx={{ textTransform: "none" }}
+          >
             Categories
           </Button>
-          <Button href="/explore" color="inherit" sx={{ textTransform: "none" }}>
+          <Button
+            href="/explore"
+            color="inherit"
+            sx={{ textTransform: "none" }}
+          >
             Explore
           </Button>
         </Box>
@@ -88,12 +104,17 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, onLogout }) => {
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
-                sx={{     boxShadow: "none"
-                }}
+                sx={{ boxShadow: "none" }}
               >
-                <MenuItem onClick={() => navigate("/profile")}>My Profile</MenuItem>
-                <MenuItem onClick={() => navigate("/settings")}>Account Settings</MenuItem>
-                <MenuItem sx = {{color:"red"}} onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={() => navigate("/profile")}>
+                  My Profile
+                </MenuItem>
+                <MenuItem onClick={() => navigate("/settings")}>
+                  Account Settings
+                </MenuItem>
+                <MenuItem sx={{ color: "red" }} onClick={handleLogout}>
+                  Logout
+                </MenuItem>
               </Menu>
             </>
           )}

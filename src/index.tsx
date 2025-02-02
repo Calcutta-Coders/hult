@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./components/App";
 import reportWebVitals from "./reportWebVitals";
 import axios from "axios";
-axios.defaults.baseURL = "https://cvwo-arnav-jhajharia.onrender.com";
+axios.defaults.baseURL = "https://cvwo-arnav-jhajharia-78rz.onrender.com";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

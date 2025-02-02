@@ -163,14 +163,17 @@ const SettingsPage: React.FC = () => {
       />
 
       <Box sx={{ maxWidth: 800, mx: "auto", mt: 4, p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
-          Account Settings
+        <Typography
+          variant="h4"
+          sx={{ mb: 3, fontWeight: 600, color: "#0d47a1" }}
+        >
+          Impact Profile
         </Typography>
 
         {/* Profile Section */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 500 }}>
-            Profile
+            Your Impact Identity
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -180,6 +183,7 @@ const SettingsPage: React.FC = () => {
                 name="name"
                 value={userData.name}
                 onChange={handleInputChange}
+                sx={{ mb: 2 }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -190,6 +194,7 @@ const SettingsPage: React.FC = () => {
                 type="email"
                 value={userData.email || ""}
                 onChange={handleInputChange}
+                sx={{ mb: 2 }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -201,7 +206,7 @@ const SettingsPage: React.FC = () => {
                 rows={3}
                 value={userData.bio || ""}
                 onChange={handleInputChange}
-                helperText="Tell us about yourself"
+                helperText="Share your story and why you care about making an impact."
               />
             </Grid>
           </Grid>
@@ -225,7 +230,7 @@ const SettingsPage: React.FC = () => {
             Delete Account
           </Button>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            This will permanently delete your account and all associated data
+            This will permanently delete your account and all associated data.
           </Typography>
         </Box>
 
@@ -235,7 +240,12 @@ const SettingsPage: React.FC = () => {
             variant="contained"
             onClick={handleSave}
             size="large"
-            sx={{ px: 4, textTransform: "none" }}
+            sx={{
+              px: 4,
+              textTransform: "none",
+              backgroundColor: "#0d47a1",
+              "&:hover": { backgroundColor: "#1565c0" },
+            }}
           >
             Save Changes
           </Button>

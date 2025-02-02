@@ -88,7 +88,7 @@ const SetupPreferences: React.FC = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#f5f5f5", // Light background for contrast
       }}
     >
       <Box
@@ -98,7 +98,7 @@ const SetupPreferences: React.FC = () => {
           bgcolor: "white",
           borderRadius: 2,
           p: 4,
-          boxShadow: 1,
+          boxShadow: 3,
         }}
       >
         <Typography
@@ -106,18 +106,18 @@ const SetupPreferences: React.FC = () => {
           sx={{
             fontWeight: 700,
             mb: 4,
-            color: "text.primary",
+            color: "#0d47a1", // ActionSphere primary color
             textAlign: "center",
           }}
         >
-          Select Categories
+          Choose Your Impact Areas
         </Typography>
 
         {/* Search Bar */}
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search categories..."
+          placeholder="Search for causes..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{ mb: 4 }}
@@ -140,7 +140,7 @@ const SetupPreferences: React.FC = () => {
               <Card
                 sx={{
                   backgroundColor: selectedCategories.includes(item.id)
-                    ? "#1976d2"
+                    ? "#0d47a1" // Selected category color
                     : "#ffffff",
                   color: selectedCategories.includes(item.id)
                     ? "#ffffff"
@@ -148,7 +148,7 @@ const SetupPreferences: React.FC = () => {
                   borderRadius: 3,
                   cursor: "pointer",
                   boxShadow: selectedCategories.includes(item.id)
-                    ? "0px 4px 15px rgba(25, 118, 210, 0.5)"
+                    ? "0px 4px 15px rgba(13, 71, 161, 0.5)" // Shadow for selected cards
                     : "0px 2px 10px rgba(0, 0, 0, 0.1)",
                   transition: "all 0.3s ease-in-out",
                   position: "relative",
@@ -185,6 +185,14 @@ const SetupPreferences: React.FC = () => {
                     >
                       {item.name}
                     </Typography>
+                    {selectedCategories.includes(item.id) && (
+                      <Typography
+                        variant="body2"
+                        sx={{ mt: 1, color: "#ffffff", fontStyle: "italic" }}
+                      >
+                        Earn Impact Points
+                      </Typography>
+                    )}
                   </CardContent>
                 </CardActionArea>
               </Card>
@@ -203,10 +211,15 @@ const SetupPreferences: React.FC = () => {
           <Button
             variant="contained"
             onClick={handleSubmit}
-            sx={{ borderRadius: 2, px: 4 }}
+            sx={{
+              borderRadius: 2,
+              px: 4,
+              backgroundColor: "#0d47a1", // Primary color
+              "&:hover": { backgroundColor: "#1565c0" }, // Hover color
+            }}
             disabled={selectedCategories.length === 0 || loading}
           >
-            {loading ? <CircularProgress size={24} /> : "Save Preferences"}
+            {loading ? <CircularProgress size={24} /> : "Save & Continue"}
           </Button>
         </Box>
       </Box>

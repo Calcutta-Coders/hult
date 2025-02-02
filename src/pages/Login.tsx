@@ -57,7 +57,7 @@ const LoginPage: React.FC<LoginProps> = ({ setToken }) => {
         xs={12}
         md={6}
         sx={{
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#0d47a1", // Dark blue for trust and impact
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -65,12 +65,18 @@ const LoginPage: React.FC<LoginProps> = ({ setToken }) => {
       >
         <Box textAlign="center">
           <img
-            src="/icon.png"
-            alt="Penguin Logo"
+            src="/actionsphere-logo.png" // Replace with ActionSphere logo
+            alt="ActionSphere Logo"
             style={{ width: "70%", maxWidth: "300px" }}
           />
-          <Typography variant="h4" sx={{ mt: 2, fontWeight: "bold" }}>
-            PENGUIN
+          <Typography
+            variant="h4"
+            sx={{ mt: 2, fontWeight: "bold", color: "white" }}
+          >
+            ActionSphere
+          </Typography>
+          <Typography variant="subtitle1" sx={{ mt: 1, color: "white" }}>
+            Turn Intent into Impact
           </Typography>
         </Box>
       </Grid>
@@ -89,10 +95,10 @@ const LoginPage: React.FC<LoginProps> = ({ setToken }) => {
       >
         <Box sx={{ width: "100%", maxWidth: "400px" }}>
           <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold" }}>
-            Stay chill
+            Welcome Back!
           </Typography>
           <Typography variant="body1" sx={{ mb: 3 }}>
-            Join today, or when it feels like it
+            Log in to track your impact, earn points, and make a difference.
           </Typography>
           {error && (
             <Typography variant="body2" color="error" sx={{ mb: 2 }}>
@@ -119,10 +125,21 @@ const LoginPage: React.FC<LoginProps> = ({ setToken }) => {
               fontSize: "1rem",
               textTransform: "none",
               borderRadius: "8px",
+              backgroundColor: "#0d47a1", // Match the theme color
+              "&:hover": { backgroundColor: "#1565c0" }, // Slightly lighter on hover
             }}
           >
             Login
           </Button>
+          <Typography
+            variant="body2"
+            sx={{ mt: 2, textAlign: "center", color: "text.secondary" }}
+          >
+            Don’t have an account?{" "}
+            <span style={{ color: "#0d47a1", cursor: "pointer" }}>
+              Sign up here
+            </span>
+          </Typography>
         </Box>
       </Grid>
     </Grid>
